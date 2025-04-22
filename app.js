@@ -10,7 +10,10 @@ app.get("/", (req, res) => {
 });
 
 app.post('/new-blog-post', (req, res) => {
-    
+    console.log(req.body.author);
+    console.log(req.body.title);
+    console.log(req.body.content);
+    console.log(new Date().toLocaleString());
 });
 
 app.listen(PORT, () => {

@@ -3,9 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Best Blog</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <nav><a href="/">Home</a></nav>
+    <!-- 
+    Post title
+    Post content
+    Post Author
+    Post Date
+    -->
+    <article>
+        <h2>Post Title</h2>
+        <p>
+            Post content! This is really good and original content that I did NOT just make up off the top of my head!!
+        </p>
+        <p>Author</p>
+        <p>Date</p>
+    </article>
     
+    <form action="/new-blog-post" method="post">
+        <!-- 
+        Author 
+        Title
+        Content
+        Submit
+        -->
+        <h2>Make new blog post</h2>
+        <label for="author">Author:</label>
+        <input type="text" name="author" id="author">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title">
+        <label for="content">Content:</label>
+        <textarea name="content" id="content"></textarea>
+        <button type="submit" id="submit">Submit Post</button>
+    </form>
 </body>
+<script src="script.js"></script>
 </html>
