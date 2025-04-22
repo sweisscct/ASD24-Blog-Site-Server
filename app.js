@@ -5,6 +5,8 @@ const PORT = 3001;
 app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
+let blogPosts = [];
+
 app.get("/", (req, res) => {
     res.sendFile("index.html", {root: __dirname});
 });
@@ -14,6 +16,13 @@ app.post('/new-blog-post', (req, res) => {
     console.log(req.body.title);
     console.log(req.body.content);
     console.log(new Date().toLocaleString());
+    blogPosts.push({
+        author: req.body.author,
+        title: req.body.title,
+        content: req.body.content,
+        datetime: new Date().toLocaleString()
+    })
+    res.redirect("/");
 });
 
 app.listen(PORT, () => {
