@@ -4,11 +4,13 @@ const bodyParser = require("body-parser");
 const PORT = 3001;
 app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view-engine", "ejs");
 
 let blogPosts = [];
 
 app.get("/", (req, res) => {
-    res.sendFile("index.html", {root: __dirname});
+    // res.sendFile("index.html", {root: __dirname});
+    res.render("index.ejs", { blogPosts });
 });
 
 app.post('/new-blog-post', (req, res) => {

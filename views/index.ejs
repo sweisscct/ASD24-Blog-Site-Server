@@ -14,14 +14,16 @@
     Post Author
     Post Date
     -->
-    <article>
-        <h2>Post Title</h2>
-        <p>
-            Post content! This is really good and original content that I did NOT just make up off the top of my head!!
-        </p>
-        <p>Author</p>
-        <p>Date</p>
-    </article>
+    <% blogPosts.reverse().forEach(post => { %>
+        <article>
+            <h2><%= post.title %></h2>
+            <p>
+                <%= post.content %>
+            </p>
+            <p><%= post.author %></p>
+            <p><%= post.datetime %></p>
+        </article>        
+    <% }) %>
     
     <form action="/new-blog-post" method="post">
         <!-- 
