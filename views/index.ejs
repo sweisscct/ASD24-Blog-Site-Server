@@ -41,6 +41,18 @@
         <textarea name="content" id="content"></textarea>
         <button type="submit" id="submit">Submit Post</button>
     </form>
+    <nav id="pagination">
+        <!-- +pagenum 
+         temporarily converts pagenum to a number before doing the operation -->
+        <a href="/?pagenum=<%= +pagenum - 1 %>"><button id="previous-page">Previous</button></a>
+            <% let pageOffset = Math.floor(+numPagesToDisplay/2) %>
+            <% let startPage = +pagenum - pageOffset %>
+            <% let endPage = +pagenum + pageOffset %>
+            <% for( let i = startPage; i <= endPage; i++ ) { %>
+                <a href="/?pagenum=<%= i %>"><button id="page-<%= i %>"><%= i %></button></a>
+            <% } %>
+        <a href="/?pagenum=<%= +pagenum + 1 %>"><button id="next-page">Next</button></a>
+    </nav>
 </body>
 <script src="script.js"></script>
 </html>

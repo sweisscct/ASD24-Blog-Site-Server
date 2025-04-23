@@ -1,13 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const PORT = 3001;
+const PORT = 3000;
 app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view-engine", "ejs");
 
 let blogPosts = [];
 let numPostsPerPage = 5;
+let numPagesToDisplay = 5;
 
 function makeDummyPosts(numPosts, blogPosts) {
     for (let i=0; i<numPosts; i++) {
@@ -45,7 +46,12 @@ app.get("/", (req, res) => {
     if (!req.query.pagenum) pagenum = 1;
     else pagenum = req.query.pagenum;
     console.log(req.query.pagenum);
-    res.render("index.ejs", { blogPosts: getDisplayPosts(numPostsPerPage, pagenum, blogPosts) });
+    res.render("index.ejs", { 
+        blogPosts: getDisplayPosts(numPostsPerPage, pagenum, blogPosts),
+        numPages: Math.ceil(blogPosts.length/numPostsPerPage),
+        pagenum, // pagenum: pagenum
+        numPagesToDisplay
+    });
 });
 
 // app.get('/page', (req, res) => {
@@ -68,7 +74,6 @@ app.post('/new-blog-post', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);
-    
 })
 
 
