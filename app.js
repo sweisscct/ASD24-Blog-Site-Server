@@ -21,11 +21,22 @@ const userSchema = new Schema({
    email: String,
 });
 
+
+
 // Hash and salt passwords
 userSchema.plugin(passportLocalMongoose);
 
 // Helper db object
 const User = mongoose.model("User", userSchema);
+
+const blogPostSchema = new Schema({
+    author: String,
+    title: String,
+    content: String,
+    datetime: Date
+});
+
+const BlogPost = mongoose.model("BlogPost", blogPostSchema);
 
 // Manage authentication and cookies
 app.use(session({
@@ -66,6 +77,17 @@ function makeDummyPosts(numPosts, blogPosts) {
 makeDummyPosts(98, blogPosts);
 
 
+
+// Load all posts into the server memory on start
+    // You don't need to query the database, which can take time
+
+// Fetch posts as the user requests them
+    // Takes less RAM 
+
+// Fetch posts as the user requests them, and keep them in memory for some time after
+    // Caching
+
+
 function getDisplayPosts(numPostsPerPage, pagenum, blogPosts) {
     /*
     pagenum = 1
@@ -86,6 +108,10 @@ function getDisplayPosts(numPostsPerPage, pagenum, blogPosts) {
 app.get("/", (req, res) => {
     // res.sendFile("index.html", {root: __dirname});
     let pagenum;
+    if (!req.isAuthenticated()) {
+        res.redirect("/login");
+        return;
+    }
     if (!req.query.pagenum) pagenum=1;
     else pagenum = req.query.pagenum;
     console.log(req.query.pagenum);
@@ -106,12 +132,25 @@ app.post('/new-blog-post', (req, res) => {
     console.log(req.body.title);
     console.log(req.body.content);
     console.log(new Date().toLocaleString());
-    blogPosts.push({
+    let blogPost = new BlogPost({
         author: req.body.author,
         title: req.body.title,
         content: req.body.content,
-        datetime: new Date().toLocaleString()
+        datetime: new Date()
+    });
+    blogPost.save()
+    .then(savedPost => {
+        blogPosts.push({
+            author: req.body.author,
+            title: req.body.title,
+            content: req.body.content,
+            datetime: new Date().toLocaleString()
+        });
+        console.log(savedPost);
+        console.log(savedPost.author);
     })
+
+    // Save to DB first or save to array first?
     res.redirect("/");
 });
 
@@ -129,7 +168,7 @@ app.post("/create-account", (req, res) => {
     }), req.body.password, (error, user) => {
         if (error) console.log(error);
         console.log("Created");
-        passport.authenticate("local", {failureRedirect: "/login2"})(req, res, () => {
+        passport.authenticate("local", {failureRedirect: "/login2"})  (req, res, () => {
             res.redirect("/?pagenum=1");
         })
     })
