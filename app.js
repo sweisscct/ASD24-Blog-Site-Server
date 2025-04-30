@@ -141,10 +141,7 @@ app.post('/new-blog-post', (req, res) => {
     blogPost.save()
     .then(savedPost => {
         blogPosts.push({
-            author: req.body.author,
-            title: req.body.title,
-            content: req.body.content,
-            datetime: new Date().toLocaleString()
+            savedPost
         });
         console.log(savedPost);
         console.log(savedPost.author);
