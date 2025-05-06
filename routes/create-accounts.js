@@ -3,7 +3,7 @@ const passport = require("../config/passportConfig");
 
 const router = express.Router();
 
-router.get('/create-account', (req, res) => {
+router.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         res.redirect("/?pagenum=1");
         return;
@@ -11,7 +11,7 @@ router.get('/create-account', (req, res) => {
     res.render("create-account.ejs");
 });
 
-router.post("/create-account", (req, res) => {
+router.post("/", (req, res) => {
     console.log(req.body);
     if (req.isAuthenticated()) res.redirect("/?pagenum=1");
     User.register(new User({

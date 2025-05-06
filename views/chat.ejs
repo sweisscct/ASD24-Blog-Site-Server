@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best Blog Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Display chats -->
+    <div id="display-chats"></div>
+    <!-- Write chats -->
+    <form action="/" method="">
+        <!-- 
+        Author 
+        Title
+        Content
+        Submit
+        -->
+        <h2>Make new chat</h2>
+        <label for="author">Author:</label>
+        <input type="text" name="author" id="author">
+        <label for="message">Message:</label>
+        <textarea name="message" id="message"></textarea>
+        <button type="submit" id="submit">Send Chat</button>
+    </form>      
+</body>
+<script>
+    const PORT = 3000;
+    const url = "ws://localhost:"+PORT;
+    const wsServer = new WebSocket(url);
+
+    const newMessage = document.getElementById("message");
+    const author = document.getElementById("author");
+    function sendMessage() {
+        const data = {
+            author,
+            newMessage
+        }
+    }
+    const sendMessageButton = document.getElementById("submit");
+    sendMessageButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        sendMessage();
+    })
+</script>
+</html>

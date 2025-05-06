@@ -1,7 +1,18 @@
 const express = require("express");
 const { BlogPost } = require("../schemas");
+const { 
+    NUM_POSTS_PER_PAGE,  
+    NUM_PAGES_TO_DISPLAY
+} = require("../config/config");
 
 const router = express.Router();
+
+let blogPosts;
+
+BlogPost.find().then(foundPosts => {
+    console.log("Length of posts is: " + foundPosts.length);
+    blogPosts = foundPosts;
+});
 
 function getDisplayPosts(numPostsPerPage, pagenum, blogPosts) {
     /*
@@ -31,10 +42,10 @@ router.get("/", (req, res) => {
     else pagenum = req.query.pagenum;
     console.log(req.query.pagenum);
     res.render("index.ejs", { 
-        blogPosts: getDisplayPosts(numPostsPerPage, pagenum, blogPosts),
-        numPages: Math.ceil(blogPosts.length/numPostsPerPage),
+        blogPosts: getDisplayPosts(NUM_POSTS_PER_PAGE, pagenum, blogPosts),
+        numPages: Math.ceil(blogPosts.length/NUM_POSTS_PER_PAGE),
         pagenum, // pagenum: pagenum
-        numPagesToDisplay
+        numPagesToDisplay: NUM_PAGES_TO_DISPLAY
     });
 });
 
