@@ -3,8 +3,9 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
-const passportLocalMongoose = require("passport-local-mongoose");
+// const passportLocalMongoose = require("passport-local-mongoose");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const { User, BlogPost } = require("./schemas");
 
 const PORT = 3000;
 app = express();
@@ -14,29 +15,29 @@ app.set("view-engine", "ejs");
 mongoose.connect("mongodb://127.0.0.1:27017/bestBlog")
 .then(conn=> console.log(conn.models));
 
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-   username: String,
-   email: String,
-});
+// const userSchema = new Schema({
+//    username: String,
+//    email: String,
+// });
 
 
 
 // Hash and salt passwords
-userSchema.plugin(passportLocalMongoose);
+// userSchema.plugin(passportLocalMongoose);
 
 // Helper db object
-const User = mongoose.model("User", userSchema);
+// const User = mongoose.model("User", userSchema);
 
-const blogPostSchema = new Schema({
-    author: String,
-    title: String,
-    content: String,
-    datetime: Date
-});
+// const blogPostSchema = new Schema({
+//     author: String,
+//     title: String,
+//     content: String,
+//     datetime: Date
+// });
 
-const BlogPost = mongoose.model("BlogPost", blogPostSchema);
+// const BlogPost = mongoose.model("BlogPost", blogPostSchema);
 
 // Manage authentication and cookies
 app.use(session({
@@ -60,7 +61,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 
 
 
-let blogPosts = [];
+let blogPosts;
 let numPostsPerPage = 5;
 let numPagesToDisplay = 5;
 
@@ -74,12 +75,16 @@ function makeDummyPosts(numPosts, blogPosts) {
         })
     }
 }
-makeDummyPosts(98, blogPosts);
-
-
+// makeDummyPosts(98, blogPosts);
 
 // Load all posts into the server memory on start
     // You don't need to query the database, which can take time
+// BlogPost.find({search quesry}, {fields filter})
+BlogPost.find().then(foundPosts => {
+    console.log("Length of posts is: " + foundPosts.length);
+    blogPosts = foundPosts;
+});
+
 
 // Fetch posts as the user requests them
     // Takes less RAM 
@@ -128,6 +133,11 @@ app.get("/", (req, res) => {
 // });
 
 app.post('/new-blog-post', (req, res) => {
+    if (!req.isAuthenticated()) {
+        res.redirect("/login");
+        return;
+    }
+    console.log(`Session user: ` + req.user.username);
     console.log(req.body.author);
     console.log(req.body.title);
     console.log(req.body.content);
@@ -140,9 +150,12 @@ app.post('/new-blog-post', (req, res) => {
     });
     blogPost.save()
     .then(savedPost => {
-        blogPosts.push({
+        // blogPosts.push({
+        //     savedPost
+        // });
+        blogPosts.push(
             savedPost
-        });
+        );
         console.log(savedPost);
         console.log(savedPost.author);
     })
