@@ -1,11 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const passport = require("passport");
+// const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
 // const passportLocalMongoose = require("passport-local-mongoose");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const { User, BlogPost } = require("./schemas");
+const loginRoutes = require("./routes/login");
+const createAccountRoutes = require("./routes/create-accounts");
+const passport = require("./config/passportConfig");
 
 const PORT = 3000;
 app = express();
@@ -53,11 +56,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
-const LocalStrategy = require("passport-local").Strategy;
-passport.use(new LocalStrategy(User.authenticate()));
+// const LocalStrategy = require("passport-local").Strategy;
+// passport.use(new LocalStrategy(User.authenticate()));
 
 
 
@@ -93,106 +96,114 @@ BlogPost.find().then(foundPosts => {
     // Caching
 
 
-function getDisplayPosts(numPostsPerPage, pagenum, blogPosts) {
-    /*
-    pagenum = 1
-    posts 0-4
+// function getDisplayPosts(numPostsPerPage, pagenum, blogPosts) {
+//     /*
+//     pagenum = 1
+//     posts 0-4
 
-    pagenum = 2
-    posts 5-9
+//     pagenum = 2
+//     posts 5-9
 
-    pagenum = 10
-    posts (10-1)*5 - 10*5-1
-    45-49
-    */
-   let start = (pagenum-1)*numPostsPerPage;
-   let end = pagenum*numPostsPerPage;
-   return blogPosts.slice().reverse().slice(start, end);
-}
+//     pagenum = 10
+//     posts (10-1)*5 - 10*5-1
+//     45-49
+//     */
+//    let start = (pagenum-1)*numPostsPerPage;
+//    let end = pagenum*numPostsPerPage;
+//    return blogPosts.slice().reverse().slice(start, end);
+// }
 
-app.get("/", (req, res) => {
-    // res.sendFile("index.html", {root: __dirname});
-    let pagenum;
-    if (!req.isAuthenticated()) {
-        res.redirect("/login");
-        return;
-    }
-    if (!req.query.pagenum) pagenum=1;
-    else pagenum = req.query.pagenum;
-    console.log(req.query.pagenum);
-    res.render("index.ejs", { 
-        blogPosts: getDisplayPosts(numPostsPerPage, pagenum, blogPosts),
-        numPages: Math.ceil(blogPosts.length/numPostsPerPage),
-        pagenum, // pagenum: pagenum
-        numPagesToDisplay
-    });
-});
-
-// app.get('/page', (req, res) => {
-//     res.render("index.ejs");
+// app.get("/", (req, res) => {
+//     // res.sendFile("index.html", {root: __dirname});
+//     let pagenum;
+//     if (!req.isAuthenticated()) {
+//         res.redirect("/login");
+//         return;
+//     }
+//     if (!req.query.pagenum) pagenum=1;
+//     else pagenum = req.query.pagenum;
+//     console.log(req.query.pagenum);
+//     res.render("index.ejs", { 
+//         blogPosts: getDisplayPosts(numPostsPerPage, pagenum, blogPosts),
+//         numPages: Math.ceil(blogPosts.length/numPostsPerPage),
+//         pagenum, // pagenum: pagenum
+//         numPagesToDisplay
+//     });
 // });
 
-app.post('/new-blog-post', (req, res) => {
-    if (!req.isAuthenticated()) {
-        res.redirect("/login");
-        return;
-    }
-    console.log(`Session user: ` + req.user.username);
-    console.log(req.body.author);
-    console.log(req.body.title);
-    console.log(req.body.content);
-    console.log(new Date().toLocaleString());
-    let blogPost = new BlogPost({
-        // update to req.user.username
-        author: req.body.author,
-        title: req.body.title,
-        content: req.body.content,
-        datetime: new Date()
-    });
-    blogPost.save()
-    .then(savedPost => {
-        // blogPosts.push({
-        //     savedPost
-        // });
-        blogPosts.push(
-            savedPost
-        );
-        console.log(savedPost);
-        console.log(savedPost.author);
-    })
+// // app.get('/page', (req, res) => {
+// //     res.render("index.ejs");
+// // });
 
-    // Save to DB first or save to array first?
-    res.redirect("/");
-});
+// app.post('/new-blog-post', (req, res) => {
+//     if (!req.isAuthenticated()) {
+//         res.redirect("/login");
+//         return;
+//     }
+//     console.log(`Session user: ` + req.user.username);
+//     console.log(req.body.author);
+//     console.log(req.body.title);
+//     console.log(req.body.content);
+//     console.log(new Date().toLocaleString());
+//     let blogPost = new BlogPost({
+//         // update to req.user.username
+//         author: req.body.author,
+//         title: req.body.title,
+//         content: req.body.content,
+//         datetime: new Date()
+//     });
+//     blogPost.save()
+//     .then(savedPost => {
+//         // blogPosts.push({
+//         //     savedPost
+//         // });
+//         blogPosts.push(
+//             savedPost
+//         );
+//         console.log(savedPost);
+//         console.log(savedPost.author);
+//     })
 
-app.get('/create-account', (req, res) => {
-    if (req.isAuthenticated()) res.redirect("/?pagenum=1");
-    res.render("create-account.ejs");
-});
+//     // Save to DB first or save to array first?
+//     res.redirect("/");
+// });
 
-app.post("/create-account", (req, res) => {
-    console.log(req.body);
-    if (req.isAuthenticated()) res.redirect("/?pagenum=1");
-    User.register(new User({
-        username: req.body.username,
-        email: req.body.email
-    }), req.body.password, (error, user) => {
-        if (error) console.log(error);
-        console.log("Created");
-        passport.authenticate("local", {failureRedirect: "/login2"})  (req, res, () => {
-            res.redirect("/?pagenum=1");
-        })
-    })
-});
+app.use("/", createAccountRoutes);
+// /create-account
 
-app.get('/login', (req, res) => {
-    if (req.isAuthenticated()) res.redirect("/?pagenum=1");
-    res.render("login.ejs");
-});
+// app.use("/2", createAccountRoutes);
+// /2/create-account
 
-app.post('/login', passport.authenticate('local', {failureRedirect: "/login"}), (req, res) => {
-    res.redirect("/?pagenum=1");
-})
+// app.get('/create-account', (req, res) => {
+//     if (req.isAuthenticated()) res.redirect("/?pagenum=1");
+//     res.render("create-account.ejs");
+// });
+
+// app.post("/create-account", (req, res) => {
+//     console.log(req.body);
+//     if (req.isAuthenticated()) res.redirect("/?pagenum=1");
+//     User.register(new User({
+//         username: req.body.username,
+//         email: req.body.email
+//     }), req.body.password, (error, user) => {
+//         if (error) console.log(error);
+//         console.log("Created");
+//         passport.authenticate("local", {failureRedirect: "/login2"})  (req, res, () => {
+//             res.redirect("/?pagenum=1");
+//         })
+//     })
+// });
+
+app.use("/", loginRoutes);
+
+// app.get('/login', (req, res) => {
+//     if (req.isAuthenticated()) res.redirect("/?pagenum=1");
+//     res.render("login.ejs");
+// });
+
+// app.post('/login', passport.authenticate('local', {failureRedirect: "/login"}), (req, res) => {
+//     res.redirect("/?pagenum=1");
+// })
 
 app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);
@@ -257,6 +268,6 @@ app.listen(PORT, () => {
     - Srecko mines for 0.5 btc
     - Timestamp
     - LastHash: xxxxxx
-    
+
     - Current Hash: abs123
 */
