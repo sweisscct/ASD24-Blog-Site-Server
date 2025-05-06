@@ -143,6 +143,7 @@ app.post('/new-blog-post', (req, res) => {
     console.log(req.body.content);
     console.log(new Date().toLocaleString());
     let blogPost = new BlogPost({
+        // update to req.user.username
         author: req.body.author,
         title: req.body.title,
         content: req.body.content,
@@ -198,4 +199,64 @@ app.listen(PORT, () => {
 })
 
 
+/*
+    Data Models 
+        - User
+        - BlogPost
+    Middleware Setup
+    Configuration
+    Test functions
+    Server initialisation
+    Routes
+        - Blog posts
+        - Create account
+        - Login
+*/
 
+/*
+    MVC - Model, View, Controller - Server architecture
+    Model 
+        - data
+        - bridge between data and program
+        - schemas.js
+            - User, BlogPost
+            - Create, Read, Update, Destroy (CRUD)
+    View
+        - UI
+        - bridge between the client and the program
+        - Routes
+
+    Controller
+        - Interatction between them
+        - bridge between the model and the view
+        - 
+*/
+
+/*
+    Overall arctitecture
+    Client-server
+    - One server
+    - Many clients
+*/
+
+/*
+    Alternative atchitecture
+    - Distributed system
+        - Many clients
+        - many servers
+    - Parallel/distributed processing/computation
+        - Many servers
+        - One client
+    - Peer-to-Peer
+        - Torrent
+*/
+
+/*
+    - David pays Gavan 50 btc
+    - Gavan pays Amil 56 btc
+    - Srecko mines for 0.5 btc
+    - Timestamp
+    - LastHash: xxxxxx
+    
+    - Current Hash: abs123
+*/
