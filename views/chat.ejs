@@ -30,18 +30,23 @@
     const url = "ws://localhost:"+PORT;
     const wsServer = new WebSocket(url);
 
-    const newMessage = document.getElementById("message");
-    const author = document.getElementById("author");
+    const newMessage = document.getElementById("message").value;
+    const author = document.getElementById("author").value;
     function sendMessage() {
         const data = {
             author,
             newMessage
         }
+        console.log(data);
+        console.log(JSON.stringify(data));
+        wsServer.send(JSON.stringify(data));
     }
     const sendMessageButton = document.getElementById("submit");
     sendMessageButton.addEventListener("click", (event) => {
         event.preventDefault();
         sendMessage();
+        console.log(newMessage)
+
     })
 </script>
 </html>

@@ -1,4 +1,5 @@
 const express = require("express");
+const WebSocket = require("ws");
 
 // Express middleware
 const bodyParser = require("body-parser");
@@ -55,13 +56,34 @@ function makeDummyPosts(numPosts, blogPosts) {
 }
 // makeDummyPosts(98, blogPosts);
 
+app.get("/chat", (req, res) => {
+    res.render("chat.ejs");
+})
+
 app.use("/", blogPostsRoutes);
 app.use("/create-account", createAccountRoutes);
 app.use("/login", loginRoutes);
-app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
-})
 
+const httpServer = app.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}`);
+});
+
+const wsServer = new WebSocket.Server( {noServer: true} );
+
+httpServer.on("upgrade", async ( request, socket, head )  => {
+    wsServer.handleUpgrade(request, socket, head, (ws) => {
+        wsServer.emit("connection", ws, request);
+    });
+});
+
+wsServer.on("connection", (ws) => {
+    ws.on("message", (message) => {
+        console.log(message);
+        console.log(message.toLocaleString());
+        console.log(JSON.parse(message.toLocaleString()))
+        console.log(JSON.parse(message.toLocaleString()).newMessage)
+    })
+})
 
 /*
     Data Models 
