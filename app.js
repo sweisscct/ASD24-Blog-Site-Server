@@ -70,14 +70,20 @@ const httpServer = app.listen(PORT, () => {
 
 const wsServer = new WebSocket.Server( {noServer: true} );
 
+let currentId = 1;
+
 httpServer.on("upgrade", async ( request, socket, head )  => {
     wsServer.handleUpgrade(request, socket, head, (ws) => {
+
         wsServer.emit("connection", ws, request);
     });
 });
 
-wsServer.on("connection", (ws) => {
+wsServer.on("connection", (ws, req) => {
+    // console.log(req);
+    ws.id = currentId++;
     ws.on("message", (message) => {
+        
         // console.log(message);
         // console.log(message.toLocaleString());
         // console.log(JSON.parse(message.toLocaleString()));
@@ -91,7 +97,10 @@ wsServer.on("connection", (ws) => {
         // console.log( wsServer.clients);
         wsServer.clients.forEach(client => {
             // OPEN is an enum (enumerated values) - limited set of values that a variable can take eg Boolean can be true or false
-            if (client.readyState == WebSocket.OPEN) client.send(message.toLocaleString());
+            if (client.readyState == WebSocket.OPEN) {
+                console.log(client.id);
+                client.send(message.toLocaleString());
+            }
         });
     })
 })
@@ -100,6 +109,10 @@ wsServer.on("connection", (ws) => {
     Data Models 
         - User
         - BlogPost
+        - Chat
+            - Author
+            - Message
+            - Timestamp
     Middleware Setup
     Configuration
     Test functions
@@ -108,6 +121,7 @@ wsServer.on("connection", (ws) => {
         - Blog posts
         - Create account
         - Login
+        - Chat
 */
 
 /*
