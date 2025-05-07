@@ -29,24 +29,38 @@
     const PORT = 3000;
     const url = "ws://localhost:"+PORT;
     const wsServer = new WebSocket(url);
+    const displayChatsDiv = document.getElementById("display-chats");
 
-    const newMessage = document.getElementById("message").value;
-    const author = document.getElementById("author").value;
+    const newMessageInput = document.getElementById("message");
+    const authorInput = document.getElementById("author");
     function sendMessage() {
         const data = {
-            author,
-            newMessage
+            author: authorInput.value,
+            newMessage: newMessageInput.value
         }
-        console.log(data);
-        console.log(JSON.stringify(data));
+        // console.log(data);
+        // console.log(JSON.stringify(data));
         wsServer.send(JSON.stringify(data));
     }
     const sendMessageButton = document.getElementById("submit");
     sendMessageButton.addEventListener("click", (event) => {
         event.preventDefault();
         sendMessage();
-        console.log(newMessage)
+        // console.log(newMessageInput.value)
 
     })
+
+    wsServer.onmessage = (wsRequest) => {
+        console.log(wsRequest);
+        const { data } = wsRequest;
+        // console.log(data);
+        displayNewMessage(JSON.parse(data));
+    }
+
+    function displayNewMessage(data) {
+        let newP = document.createElement("p");
+        newP.innerText = `Message from: ${data.author}\n${data.newMessage}`;
+        displayChatsDiv.appendChild(newP);
+    }
 </script>
 </html>

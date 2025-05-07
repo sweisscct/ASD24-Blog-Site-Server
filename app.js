@@ -78,10 +78,21 @@ httpServer.on("upgrade", async ( request, socket, head )  => {
 
 wsServer.on("connection", (ws) => {
     ws.on("message", (message) => {
-        console.log(message);
-        console.log(message.toLocaleString());
-        console.log(JSON.parse(message.toLocaleString()))
-        console.log(JSON.parse(message.toLocaleString()).newMessage)
+        // console.log(message);
+        // console.log(message.toLocaleString());
+        // console.log(JSON.parse(message.toLocaleString()));
+        // console.log(JSON.parse(message.toLocaleString()).newMessage);
+        // ws.send("Hello!");
+
+        // Reply to the client that sent the message
+        // ws.send(message.toLocaleString());
+
+        // Relay to all connected clients
+        // console.log( wsServer.clients);
+        wsServer.clients.forEach(client => {
+            // OPEN is an enum (enumerated values) - limited set of values that a variable can take eg Boolean can be true or false
+            if (client.readyState == WebSocket.OPEN) client.send(message.toLocaleString());
+        });
     })
 })
 
