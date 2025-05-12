@@ -73,6 +73,9 @@ const wsServer = new WebSocket.Server( {noServer: true} );
 let currentId = 1;
 
 httpServer.on("upgrade", async ( request, socket, head )  => {
+    console.log(request.isAuthenticated());
+    console.log(request.user);
+    console.log(request.session);
     wsServer.handleUpgrade(request, socket, head, (ws) => {
 
         wsServer.emit("connection", ws, request);
@@ -80,7 +83,7 @@ httpServer.on("upgrade", async ( request, socket, head )  => {
 });
 
 wsServer.on("connection", (ws, req) => {
-    // console.log(req);
+    // console.log(req.session.passport.user);
     ws.id = currentId++;
     ws.on("message", (message) => {
         

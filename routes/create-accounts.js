@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("../config/passportConfig");
+const { User } =  require("../schemas");
 
 const router = express.Router();
 
@@ -13,7 +14,10 @@ router.get('/', (req, res) => {
 
 router.post("/", (req, res) => {
     console.log(req.body);
-    if (req.isAuthenticated()) res.redirect("/?pagenum=1");
+    if (req.isAuthenticated()) {
+        res.redirect("/?pagenum=1");
+        return;
+    }
     User.register(new User({
         username: req.body.username,
         email: req.body.email
