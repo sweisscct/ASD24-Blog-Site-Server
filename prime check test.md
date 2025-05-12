@@ -1,0 +1,1 @@
+What do we need to check to make sure a prime test function works correctly?
