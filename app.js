@@ -166,7 +166,12 @@ wsServer.on("connection", (ws, req) => {
 */
 
 /*
+- Bitcoin wallet
+    - private-public key pair
+    - wallet address is the public key
+
     - David pays Gavan 50 btc
+        - David's locks this with is private key
     - Gavan pays Amil 56 btc
     - Srecko mines for 0.5 btc
     - Timestamp
@@ -174,3 +179,4 @@ wsServer.on("connection", (ws, req) => {
 
     - Current Hash: abs123
 */
+

@@ -1,5 +1,7 @@
 const passport = require("passport");
 const { User } = require("../schemas");
+// const schemas = require("../schemas");
+// const User = schemas.User
 
 
 passport.serializeUser(User.serializeUser());
